@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ negocio.eslogan }}">
+    <title>{{ negocio.nombre }} | Café de especialidad</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="header">
+        <div class="contenedor header__interno">
+            <a href="#inicio" class="logo">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="" width="36" height="36">
+                <span>{{ negocio.nombre }}</span>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#beneficios">Por qué elegirnos</a>
+                <a href="#productos">Productos</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            <button class="btn-carrito" id="btnCarrito" aria-label="Abrir carrito">
+                🛒 <span id="contadorCarrito">0</span>
+            </button>
+            <button class="btn-menu" id="btnMenu" aria-label="Abrir menú">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO / PROPUESTA DE VALOR -->
+        <section class="hero" id="inicio">
+            <div class="contenedor hero__interno">
+                <div class="hero__texto">
+                    <span class="etiqueta">Tostado artesanal · {{ negocio.ciudad }}</span>
+                    <h1>{{ negocio.eslogan }}</h1>
+                    <p>{{ negocio.descripcion }}</p>
+                    <div class="hero__acciones">
+                        <a href="#productos" class="btn btn--primario">Ver productos</a>
+                        <a href="https://wa.me/{{ negocio.whatsapp }}?text=Hola!%20Quiero%20hacer%20un%20pedido"
+                           class="btn btn--secundario" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+                    </div>
+                    <ul class="datos">
+                        <li><strong>+300</strong> clientes felices</li>
+                        <li><strong>6</strong> orígenes seleccionados</li>
+                        <li><strong>7 días</strong> máx. desde el tueste</li>
+                    </ul>
+                </div>
+                <div class="hero__visual" aria-hidden="true">
+                    <div class="taza">☕</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BENEFICIOS -->
+        <section class="seccion" id="beneficios">
+            <div class="contenedor">
+                <h2 class="seccion__titulo">Por qué elegirnos</h2>
+                <p class="seccion__sub">Calidad de especialidad con cercanía de emprendimiento local.</p>
+                <div class="grilla grilla--3">
+                    {% for b in beneficios %}
+                    <article class="tarjeta beneficio">
+                        <div class="beneficio__icono">{{ b.icono }}</div>
+                        <h3>{{ b.titulo }}</h3>
+                        <p>{{ b.texto }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section class="seccion seccion--alt" id="productos">
+            <div class="contenedor">
+                <h2 class="seccion__titulo">Nuestros productos</h2>
+                <p class="seccion__sub">Filtra por categoría y agrega tus favoritos al carrito.</p>
+
+                <div class="filtros" id="filtros">
+                    <button class="filtro activo" data-filtro="todos">Todos</button>
+                    <button class="filtro" data-filtro="grano">En grano</button>
+                    <button class="filtro" data-filtro="molido">Molido</button>
+                    <button class="filtro" data-filtro="accesorios">Accesorios</button>
+                </div>
+
+                <div class="grilla grilla--3" id="listaProductos">
+                    {% for p in productos %}
+                    <article class="tarjeta producto" data-categoria="{{ p.categoria }}">
+                        <div class="producto__imagen">{{ p.emoji }}</div>
+                        <span class="producto__cat">{{ p.categoria }}</span>
+                        <h3>{{ p.nombre }}</h3>
+                        <p>{{ p.descripcion }}</p>
+                        <div class="producto__pie">
+                            <span class="precio">${{ "{:,.0f}".format(p.precio).replace(",", ".") }}</span>
+                            <button class="btn btn--primario btn--chico btn-agregar"
+                                    data-id="{{ p.id }}"
+                                    data-nombre="{{ p.nombre }}"
+                                    data-precio="{{ p.precio }}">Agregar</button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- LLAMADA A LA ACCIÓN -->
+        <section class="cta">
+            <div class="contenedor">
+                <h2>Tu primera bolsa con 10% de descuento</h2>
+                <p>Escríbenos por WhatsApp y menciona el código <strong>MAULE10</strong>.</p>
+                <a href="https://wa.me/{{ negocio.whatsapp }}?text=Hola!%20Quiero%20usar%20el%20codigo%20MAULE10"
+                   class="btn btn--claro" target="_blank" rel="noopener">Quiero mi descuento</a>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section class="seccion" id="contacto">
+            <div class="contenedor contacto">
+                <div>
+                    <h2 class="seccion__titulo">Hablemos</h2>
+                    <p class="seccion__sub">¿Dudas, pedidos para tu oficina o café para eventos? Escríbenos.</p>
+                    <ul class="contacto__datos">
+                        <li>📍 {{ negocio.ciudad }}</li>
+                        <li>✉️ {{ negocio.correo }}</li>
+                        <li>💬 WhatsApp: +{{ negocio.whatsapp }}</li>
+                    </ul>
+                </div>
+                <form class="formulario" id="formContacto" novalidate>
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Tu nombre">
+                    <label for="correo">Correo</label>
+                    <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.cl">
+                    <label for="mensaje">Mensaje</label>
+                    <textarea id="mensaje" name="mensaje" rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
+                    <p class="formulario__msg" id="formMsg" role="status"></p>
+                    <button type="submit" class="btn btn--primario">Enviar mensaje</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="contenedor">
+            <p>© <span id="anio"></span> {{ negocio.nombre }} · Proyecto profesor hermann · Profe ponganos un 7.0</p>
+        </div>
+    </footer>
+
+    <!-- PANEL DEL CARRITO -->
+    <aside class="panel" id="panelCarrito" aria-hidden="true">
+        <div class="panel__cabecera">
+            <h3>Tu carrito</h3>
+            <button class="panel__cerrar" id="cerrarCarrito" aria-label="Cerrar carrito">✕</button>
+        </div>
+        <ul class="panel__lista" id="listaCarrito"></ul>
+        <div class="panel__pie">
+            <p class="panel__total">Total: <strong id="totalCarrito">$0</strong></p>
+            <button class="btn btn--secundario btn--chico" id="vaciarCarrito">Vaciar</button>
+            <a class="btn btn--primario btn--chico" id="pedirCarrito" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+        </div>
+    </aside>
+    <div class="fondo" id="fondo"></div>
+
+    <div class="aviso" id="aviso" role="status"></div>
+
+    <!-- El número se entrega a JavaScript de forma segura desde Flask -->
+    <script>window.WHATSAPP = "{{ negocio.whatsapp }}";</script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
